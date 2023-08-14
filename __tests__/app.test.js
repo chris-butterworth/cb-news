@@ -37,7 +37,7 @@ describe('/api', () => {
 					.expect(200)
 					.then((response) => {
 						const parsedResponse = JSON.parse(response.text)
-					
+
 						expect(parsedResponse).toEqual(endpoints)
 					})
 			})
@@ -68,7 +68,9 @@ describe('/api/articles/:article_id', () => {
 			.get('/api/articles/999')
 			.expect(404)
 			.then((response) => {
-				expect(response.body).toEqual({ msg: 'No article found for article_id 999' })
+				expect(response.body).toEqual({
+					msg: 'No article found for article_id 999',
+				})
 			})
 	})
 	test('GET:400 responds with Bad Request when given an invalid input', () => {
@@ -77,6 +79,28 @@ describe('/api/articles/:article_id', () => {
 			.expect(400)
 			.then((response) => {
 				expect(response.body).toEqual({ msg: 'Bad request' })
+			})
+	})
+})
+describe('/api/articles', () => {
+	test('GET:200 responds with an array of all article objects sorted by date descending', () => {
+		return request(app)
+			.get('/api/articles')
+			.expect(200)
+			.then((response) => {
+				expect(response.body).toHaveLength(13)
+				expect(response.body).toBeSortedBy('created_at', { descending: true })
+				response.body.forEach((article) => {
+					expect(article).not.toHaveProperty('body', expect.any(String))
+					expect(article).toHaveProperty('author', expect.any(String))
+					expect(article).toHaveProperty('title', expect.any(String))
+					expect(article).toHaveProperty('article_id', expect.any(Number))
+					expect(article).toHaveProperty('topic', expect.any(String))
+					expect(article).toHaveProperty('created_at', expect.any(String))
+					expect(article).toHaveProperty('votes', expect.any(Number))
+					expect(article).toHaveProperty('article_img_url', expect.any(String))
+					expect(article).toHaveProperty('comment_count', expect.any(Number))
+				})
 			})
 	})
 })
