@@ -41,5 +41,12 @@
 				}
 			]
 		}
+	},
+	"POST /api/examplePost": {
+		"description": "example Post",
+		"requestBodyFormat": { "example": { "body": "format" } },
+		"exampleResponse": {
+			"topics": [{ "slug": "football", "description": "Footie!" }]
+		}
 	}
 }
