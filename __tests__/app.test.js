@@ -8,6 +8,18 @@ const fs = require('fs/promises')
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
+describe('/api/notapath', () => {
+	test('ALL:404 responds with 404 Not found for any invalid path', () => {
+		return request(app)
+			.get('/api/notapath')
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body
+				expect(msg).toBe('Not found')
+			})
+	})
+})
+
 describe('/api/topics', () => {
 	test('GET:200 responds with an array of topic objects.', () => {
 		return request(app)

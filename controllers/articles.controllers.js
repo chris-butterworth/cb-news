@@ -11,9 +11,6 @@ exports.getArticle = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
 	getAllArticles().then((articles) => {
-		articles.forEach((article) => {
-			article.comment_count = +article.comment_count
-		})
 		response.status(200).send(articles)
 	})
 }
