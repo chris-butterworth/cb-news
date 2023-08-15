@@ -116,3 +116,56 @@ describe('/api/articles', () => {
 			})
 	})
 })
+
+describe('POST /api/articles/:article_id/comments', () => {
+	test('POST:201 adds a comment for an article', () => {
+		return request(app)
+			.post('/api/articles/2/comments')
+			.send({
+				username: 'rogersop',
+				body: 'Such coding many comments wow',
+			})
+			.expect(201)
+			.then(({ _body }) => {
+				expect(_body.comment_id).toBe(19)
+				expect(_body.body).toBe('Such coding many comments wow')
+				expect(_body.article_id).toBe(2)
+				expect(_body.author).toBe('rogersop')
+				expect(_body.votes).toBe(0)
+				expect(_body).toHaveProperty('created_at', expect.any(String))
+			})
+	})
+	test('POST:404 responds with 404 when request is valid but the article_id is not found', () => {
+		return request(app)
+			.post('/api/articles/999/comments')
+			.send({
+				username: 'rogersop',
+				body: 'Such coding many comments wow',
+			})
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('No article found for article_id 999')
+			})
+	})
+	test('POST:400 responds with 400 when the article_id is invalid', () => {
+		return request(app)
+			.post('/api/articles/banana/comments')
+			.send({
+				username: 'rogersop',
+				body: 'Such coding many comments wow',
+			})
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad request')
+			})
+	})
+	test('POST:400 responds with 400 when the post body is the wrong format', () => {
+		return request(app)
+			.post('/api/articles/2/comments')
+			.send('Such coding many comments wow')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad request, please see ./endpoints')
+			})
+	})
+})
