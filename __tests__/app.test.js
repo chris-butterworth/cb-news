@@ -116,3 +116,48 @@ describe('/api/articles', () => {
 			})
 	})
 })
+describe('/api/articles/:article_id/comments', () => {
+	test('GET:200 responds with all the comments containing the passed article_id', () => {
+		return request(app)
+			.get('/api/articles/1/comments')
+			.expect(200)
+			.then(({ body }) => {
+				expect(body).toHaveLength(11)
+				expect(body).toBeSortedBy('created_at', { descending: true })
+				body.forEach((article) => {
+					expect(article).toHaveProperty('comment_id', expect.any(Number))
+					expect(article).toHaveProperty('votes', expect.any(Number))
+					expect(article).toHaveProperty('created_at', expect.any(String))
+					expect(article).toHaveProperty('author', expect.any(String))
+					expect(article).toHaveProperty('body', expect.any(String))
+					expect(article.article_id).toBe(1)
+				})
+			})
+	})
+	test('GET:200 responds with an empty array if passed a valid article_id containing no comments', () => {
+		return request(app)
+			.get('/api/articles/2/comments')
+			.expect(200)
+			.then(({ body }) => {
+				expect(body).toHaveLength(0)
+			})
+	})
+	test('GET:404 responds with Not Found when request is valid but the id is not found in the database', () => {
+		return request(app)
+			.get('/api/articles/999/comments')
+			.expect(404)
+			.then((response) => {
+				expect(response.body).toEqual({
+					msg: 'No article found for article_id 999',
+				})
+			})
+	})
+	test('GET:400 responds with Bad Request when given an invalid input', () => {
+		return request(app)
+			.get('/api/articles/bananas/comments')
+			.expect(400)
+			.then((response) => {
+				expect(response.body).toEqual({ msg: 'Bad request' })
+			})
+	})
+})
