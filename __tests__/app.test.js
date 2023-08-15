@@ -135,6 +135,25 @@ describe('POST /api/articles/:article_id/comments', () => {
 				expect(_body).toHaveProperty('created_at', expect.any(String))
 			})
 	})
+	test('POST:201 will ignore any additional properties passed in with the body object', () => {
+		return request(app)
+			.post('/api/articles/2/comments')
+			.send({
+				username: 'rogersop',
+				body: 'Such coding many comments wow',
+				key: 'value'
+			})
+			.expect(201)
+			.then(({ _body }) => {
+				expect(_body).not.toHaveProperty('key')
+				expect(_body.comment_id).toBe(19)
+				expect(_body.body).toBe('Such coding many comments wow')
+				expect(_body.article_id).toBe(2)
+				expect(_body.author).toBe('rogersop')
+				expect(_body.votes).toBe(0)
+				expect(_body).toHaveProperty('created_at', expect.any(String))
+			})
+	})
 	test('POST:404 responds with 404 when request is valid but the article_id is not found', () => {
 		return request(app)
 			.post('/api/articles/999/comments')
@@ -145,6 +164,18 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.expect(404)
 			.then(({ body }) => {
 				expect(body.msg).toBe('No article found for article_id 999')
+			})
+	})
+	test('POST:404 responds with 404 when request is valid but the username is not found', () => {
+		return request(app)
+			.post('/api/articles/2/comments')
+			.send({
+				username: 'doge',
+				body: 'Such coding many comments wow',
+			})
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('User not found')
 			})
 	})
 	test('POST:400 responds with 400 when the article_id is invalid', () => {

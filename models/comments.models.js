@@ -1,7 +1,6 @@
 const db = require('../db/connection')
 
 exports.postNewComment = (body, author, article_id) => {
-
 	return db
 		.query(
 			`
