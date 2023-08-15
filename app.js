@@ -11,8 +11,11 @@ const {
 	handlePsqlErrors,
 	handleServerErrors,
 } = require('./errors/errors')
+const { postComment } = require('./controllers/comments.controllers')
 
 const app = express()
+
+app.use(express.json())
 
 app.get('/api', getEndpoints)
 
@@ -23,6 +26,8 @@ app.get('/api/articles/:article_id', getArticle)
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id/comments', getComments)
+
+app.post('/api/articles/:article_id/comments', postComment)
 
 app.use((req, res) => {
 	res.status(404).send({ msg: 'Not found' })
