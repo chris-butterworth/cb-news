@@ -186,7 +186,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.send({
 				username: 'rogersop',
 				body: 'Such coding many comments wow',
-				key: 'value'
+				key: 'value',
 			})
 			.expect(201)
 			.then(({ _body }) => {
@@ -244,4 +244,63 @@ describe('POST /api/articles/:article_id/comments', () => {
 				expect(body.msg).toBe('Bad request, please see ./endpoints')
 			})
 	})
+})
+describe('PATCH /api/arcticle/:article_id', () => {
+	test('PATCH:201 increases the vote value of an article by one and returns the updated article', () => {
+		return request(app)
+			.patch('/api/articles/1')
+			.send({ inc_votes: 1 })
+			.expect(200)
+			.then((response) => {
+				expect(response.body.votes).toBe(101)
+				expect(response.body).toHaveProperty('author', expect.any(String))
+				expect(response.body).toHaveProperty('title', expect.any(String))
+				expect(response.body).toHaveProperty('article_id', expect.any(Number))
+				expect(response.body).toHaveProperty('body', expect.any(String))
+				expect(response.body).toHaveProperty('topic', expect.any(String))
+				expect(response.body).toHaveProperty('created_at', expect.any(String))
+				expect(response.body).toHaveProperty(
+					'article_img_url',
+					expect.any(String)
+				)
+			})
+	})
+	test('PATCH:201 decreases the vote value of an article by one and returns the updated article', () => {
+		return request(app)
+			.patch('/api/articles/1')
+			.send({ inc_votes: -100 })
+			.expect(200)
+			.then((response) => {
+				expect(response.body.votes).toBe(0)
+				expect(response.body).toHaveProperty('author', expect.any(String))
+				expect(response.body).toHaveProperty('title', expect.any(String))
+				expect(response.body).toHaveProperty('article_id', expect.any(Number))
+				expect(response.body).toHaveProperty('body', expect.any(String))
+				expect(response.body).toHaveProperty('topic', expect.any(String))
+				expect(response.body).toHaveProperty('created_at', expect.any(String))
+				expect(response.body).toHaveProperty(
+					'article_img_url',
+					expect.any(String)
+				)
+			})
+	})
+	test('PATCH:201 should not change votes on other articles', () => {
+		return db.query('SELECT * FROM articles').then((prePatch) => {
+			return request(app)
+				.patch('/api/articles/1')
+				.send({ inc_votes: 1 })
+				.expect(200)
+				.then(() => {
+					return db.query('SELECT * FROM articles')
+				})
+				.then((postPatch) => {
+					postPatch.rows.pop()
+					prePatch.rows.shift()
+					expect(postPatch.rows).toEqual(prePatch.rows)
+				})
+		})
+	})
+	//Incorrect request body 400 bad requset or 304 not modified`
+	//Article doesnt exist 304 not modified
+	//
 })

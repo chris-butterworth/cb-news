@@ -1,4 +1,8 @@
-const { getArticleById, getAllArticles } = require('../models/articles.models')
+const {
+	getArticleById,
+	getAllArticles,
+	updateArticleVotes,
+} = require('../models/articles.models')
 
 exports.getArticle = (request, response, next) => {
 	const { article_id } = request.params
@@ -15,3 +19,11 @@ exports.getArticles = (request, response, next) => {
 	})
 }
 
+exports.addVotes = (request, response, next) => {
+	const { article_id } = request.params
+	const { inc_votes } = request.body
+
+	updateArticleVotes(inc_votes, article_id).then(([article]) => {
+		response.status(200).send(article)
+	})
+}

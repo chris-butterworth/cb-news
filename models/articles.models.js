@@ -38,3 +38,20 @@ exports.getAllArticles = () => {
 			return articles.rows
 		})
 }
+
+exports.updateArticleVotes = (newVotes, article_id) => {
+	return db
+		.query(
+			`
+	UPDATE articles
+	SET votes = votes + $1
+	WHERE article_id = $2
+	RETURNING *
+	`,
+			[newVotes, article_id]
+		)
+		.then((article) => {
+
+			return article.rows
+		})
+}
