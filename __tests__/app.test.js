@@ -15,7 +15,7 @@ describe('GET /api/notapath', () => {
 			.expect(404)
 			.then(({ body }) => {
 				const { msg } = body
-				expect(msg).toBe('Not found')
+				expect(msg).toBe('Path not found')
 			})
 	})
 })
@@ -186,7 +186,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.send({
 				username: 'rogersop',
 				body: 'Such coding many comments wow',
-				key: 'value'
+				key: 'value',
 			})
 			.expect(201)
 			.then(({ _body }) => {
@@ -242,6 +242,37 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Bad request, please see ./endpoints')
+			})
+	})
+})
+describe('DELETE /api/comments/:comment_id', () => {
+	test('DELETE:204 responds with 204 no content, removes the passed comment from the database', () => {
+		return request(app)
+			.delete('/api/comments/1')
+			.expect(204)
+			.then(() => {
+				return db.query(`SELECT * FROM comments`).then(({ rows }) => {
+					const verified = rows.some((comment) => {
+						comment.comment_id === 1
+					})
+					expect(verified).toBe(false)
+				})
+			})
+	})
+	test('DELETE:404 responds with 404 when the request is valid but the comment is not found', () => {
+		return request(app)
+			.delete('/api/comments/999')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('No comment found at comment_id 999')
+			})
+	})
+	test('DELETE:400 responds with 400 when passed an invalid comment_id', () => {
+		return request(app)
+			.delete('/api/comments/morebananas')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad request')
 			})
 	})
 })

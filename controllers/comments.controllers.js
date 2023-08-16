@@ -1,6 +1,7 @@
 const {
 	getCommentsByArticleId,
 	postNewComment,
+	removeCommentById,
 } = require('../models/comments.models')
 const { getArticleById } = require('../models/articles.models')
 const { getUser } = require('../models/users.models')
@@ -13,10 +14,12 @@ exports.getComments = (request, response, next) => {
 		getArticleById(article_id),
 	]
 
-	return Promise.all(promises).then((resolvedPromises) => {
-		const comments = resolvedPromises[0]
-		response.status(200).send(comments)
-	}).catch(next)
+	return Promise.all(promises)
+		.then((resolvedPromises) => {
+			const comments = resolvedPromises[0]
+			response.status(200).send(comments)
+		})
+		.catch(next)
 }
 
 exports.postComment = (request, response, next) => {
@@ -37,6 +40,16 @@ exports.postComment = (request, response, next) => {
 		})
 		.then(([postedComment]) => {
 			response.status(201).send(postedComment)
+		})
+		.catch(next)
+}
+
+exports.removeComment = (request, response, next) => {
+	const { comment_id } = request.params
+
+	removeCommentById(comment_id)
+		.then(() => {
+			response.status(204).send()
 		})
 		.catch(next)
 }
