@@ -186,7 +186,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.send({
 				username: 'rogersop',
 				body: 'Such coding many comments wow',
-				key: 'value'
+				key: 'value',
 			})
 			.expect(201)
 			.then(({ _body }) => {
@@ -220,7 +220,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			})
 			.expect(404)
 			.then(({ body }) => {
-				expect(body.msg).toBe('User not found')
+				expect(body.msg).toBe('User doge not found')
 			})
 	})
 	test('POST:400 responds with 400 when the article_id is invalid', () => {
@@ -239,6 +239,73 @@ describe('POST /api/articles/:article_id/comments', () => {
 		return request(app)
 			.post('/api/articles/2/comments')
 			.send('Such coding many comments wow')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad request, please see ./endpoints')
+			})
+	})
+})
+describe('PATCH /api/arcticle/:article_id', () => {
+	test('PATCH:200 increases the vote value of an article by one and returns the updated article', () => {
+		return request(app)
+			.patch('/api/articles/1')
+			.send({ inc_votes: 1 })
+			.expect(200)
+			.then((response) => {
+				expect(response.body.votes).toBe(101)
+				expect(response.body).toHaveProperty('author', expect.any(String))
+				expect(response.body).toHaveProperty('title', expect.any(String))
+				expect(response.body).toHaveProperty('article_id', expect.any(Number))
+				expect(response.body).toHaveProperty('body', expect.any(String))
+				expect(response.body).toHaveProperty('topic', expect.any(String))
+				expect(response.body).toHaveProperty('created_at', expect.any(String))
+				expect(response.body).toHaveProperty(
+					'article_img_url',
+					expect.any(String)
+				)
+			})
+	})
+	test('PATCH:200 decreases the vote value of an article by 100 and returns the updated article', () => {
+		return request(app)
+			.patch('/api/articles/1')
+			.send({ inc_votes: -100 })
+			.expect(200)
+			.then((response) => {
+				expect(response.body.votes).toBe(0)
+				expect(response.body).toHaveProperty('author', expect.any(String))
+				expect(response.body).toHaveProperty('title', expect.any(String))
+				expect(response.body).toHaveProperty('article_id', expect.any(Number))
+				expect(response.body).toHaveProperty('body', expect.any(String))
+				expect(response.body).toHaveProperty('topic', expect.any(String))
+				expect(response.body).toHaveProperty('created_at', expect.any(String))
+				expect(response.body).toHaveProperty(
+					'article_img_url',
+					expect.any(String)
+				)
+			})
+	})
+	test('PATCH:404 responds with Not found if that article_id is valid but doesnt exist', () => {
+		return request(app)
+			.patch('/api/articles/911')
+			.send({ inc_votes: 1 })
+			.expect(404)
+			.then(({ body }) => {
+				expect(body.msg).toBe('No article found for article_id 911')
+			})
+	})
+	test('PATCH:400 responds with Bad request if given an invalid article id', () => {
+		return request(app)
+			.patch('/api/articles/banana')
+			.send({ inc_votes: 1 })
+			.expect(400)
+			.then(({ body }) => {
+				expect(body.msg).toBe('Bad request')
+			})
+	})
+	test('PATCH:400 responds with Bad request if given an invalid body', () => {
+		return request(app)
+			.patch('/api/articles/1')
+			.send({ dave: 1 })
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Bad request, please see ./endpoints')
