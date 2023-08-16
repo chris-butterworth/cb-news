@@ -51,7 +51,6 @@ exports.updateArticleVotes = (newVotes, article_id) => {
 			[newVotes, article_id]
 		)
 		.then((article) => {
-
 			return article.rows
 		})
 }

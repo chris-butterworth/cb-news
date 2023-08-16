@@ -220,7 +220,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			})
 			.expect(404)
 			.then(({ body }) => {
-				expect(body.msg).toBe('User not found')
+				expect(body.msg).toBe('User doge not found')
 			})
 	})
 	test('POST:400 responds with 400 when the article_id is invalid', () => {
@@ -265,7 +265,7 @@ describe('PATCH /api/arcticle/:article_id', () => {
 				)
 			})
 	})
-	test('PATCH:201 decreases the vote value of an article by one and returns the updated article', () => {
+	test('PATCH:201 decreases the vote value of an article by 100 and returns the updated article', () => {
 		return request(app)
 			.patch('/api/articles/1')
 			.send({ inc_votes: -100 })
@@ -300,7 +300,32 @@ describe('PATCH /api/arcticle/:article_id', () => {
 				})
 		})
 	})
-	//Incorrect request body 400 bad requset or 304 not modified`
-	//Article doesnt exist 304 not modified
-	//
+	test('PATCH:404 responds with Not found if that article_id is valid but doesnt exist', () => {
+		return request(app)
+		.patch('/api/articles/911')
+		.send({ inc_votes: 1 })
+		.expect(404)
+		.then(({ body }) => {
+			expect(body.msg).toBe('No article found for article_id 911')
+		})
+	})
+	test('PATCH:400 responds with Bad request if given an invalid article id', () => {
+		return request(app)
+		.patch('/api/articles/banana')
+		.send({ inc_votes: 1 })
+		.expect(400)
+		.then(({ body }) => {
+			expect(body.msg).toBe('Bad request')
+		})
+	})
+	test('PATCH:400 responds with Bad request if given an invalid body', () => {
+		return request(app)
+		.patch('/api/articles/1')
+		.send({ dave: 1 })
+		.expect(400)
+		.then(({ body }) => {
+			expect(body.msg).toBe('Bad request, please see ./endpoints')
+		})
+	})
+	
 })
