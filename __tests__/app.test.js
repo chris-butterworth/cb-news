@@ -115,6 +115,64 @@ describe('GET /api/articles', () => {
 				})
 			})
 	})
+	test('GET:200 query topic will filter results by the passed topic', () => {
+		return request(app)
+			.get('/api/articles?topic=cats')
+			.expect(200)
+			.then((response) => {
+				expect(response.body).toHaveLength(1)
+			})
+	})
+	test('GET:200 query sort_by will sort articles by any valid column', () => {
+		return request(app)
+			.get('/api/articles?sort_by=votes')
+			.expect(200)
+			.then((response) => {
+				expect(response.body).toHaveLength(13)
+				expect(response.body).toBeSortedBy('votes', { descending: true })
+			})
+	})
+	test('GET:200 query order can be set to asc or desc', () => {
+		return request(app)
+			.get('/api/articles?sort_by=votes&order=asc')
+			.expect(200)
+			.then((response) => {
+				expect(response.body).toHaveLength(13)
+				expect(response.body).toBeSortedBy('votes')
+			})
+	})
+	test('GET:400 an invalid sort_by will return a 400 error', () => {
+		return request(app)
+			.get('/api/articles?sort_by=bananas')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body).toEqual({
+					msg: {
+						acceptedSort: [
+							'author',
+							'title',
+							'article_id',
+							'topic',
+							'created_at',
+							'votes',
+							'comment_count',
+						],
+					},
+				})
+			})
+	})
+	test('GET:400 an invalid order will return a 400 error', () => {
+		return request(app)
+			.get('/api/articles?order=bananas')
+			.expect(400)
+			.then(({ body }) => {
+				expect(body).toEqual({
+					msg: {
+						acceptedOrder: ['ASC', 'DESC'],
+					},
+				})
+			})
+	})
 })
 describe('GET /api/articles/:article_id/comments', () => {
 	test('GET:200 responds with all the comments containing the passed article_id', () => {
