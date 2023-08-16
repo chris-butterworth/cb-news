@@ -4,4 +4,5 @@ exports.getUsers = (request, response, next) =>{
     getAllUsers().then((users)=>{
         response.status(200).send(users)
     })
+    .catch(next)
 }
