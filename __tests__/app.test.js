@@ -61,18 +61,16 @@ describe('GET /api/articles/:article_id', () => {
 		return request(app)
 			.get('/api/articles/1')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveProperty('author', expect.any(String))
-				expect(response.body).toHaveProperty('title', expect.any(String))
-				expect(response.body).toHaveProperty('article_id', expect.any(Number))
-				expect(response.body).toHaveProperty('body', expect.any(String))
-				expect(response.body).toHaveProperty('topic', expect.any(String))
-				expect(response.body).toHaveProperty('created_at', expect.any(String))
-				expect(response.body).toHaveProperty('votes', expect.any(Number))
-				expect(response.body).toHaveProperty(
-					'article_img_url',
-					expect.any(String)
-				)
+			.then(({ body }) => {
+				expect(body.comment_count).toBe(11)
+				expect(body).toHaveProperty('author', expect.any(String))
+				expect(body).toHaveProperty('title', expect.any(String))
+				expect(body).toHaveProperty('article_id', expect.any(Number))
+				expect(body).toHaveProperty('body', expect.any(String))
+				expect(body).toHaveProperty('topic', expect.any(String))
+				expect(body).toHaveProperty('created_at', expect.any(String))
+				expect(body).toHaveProperty('votes', expect.any(Number))
+				expect(body).toHaveProperty('article_img_url', expect.any(String))
 			})
 	})
 	test('GET:404 responds with Not Found when request is valid but the id is not found in the database', () => {

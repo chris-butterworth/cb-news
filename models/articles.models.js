@@ -2,7 +2,18 @@ const db = require('../db/connection')
 
 exports.getArticleById = (article_id) => {
 	return db
-		.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+		.query(
+			`
+		SELECT articles.*, 
+		CAST(COUNT(comments.article_id) AS INT) AS comment_count
+		FROM articles
+		LEFT JOIN comments
+		ON articles.article_id = comments.article_id
+		WHERE articles.article_id = $1
+		GROUP BY articles.article_id
+		`,
+			[article_id]
+		)
 		.then((article) => {
 			if (!article.rowCount) {
 				return Promise.reject({
