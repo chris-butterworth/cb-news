@@ -10,7 +10,7 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 * POST new Comments to an Article
 * PATCH existing Articles and Comments
 * DELETE comments
-* Articles can be up or down voted (comment voting coming soon)
+* Articles and Comments can be up or down voted
 
 ### Installation Guide
 * Find the repository [here](https://github.com/chris-butterworth/cb-news) 
