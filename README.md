@@ -41,6 +41,6 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 ### Technologies Used
 * [NodeJS](https://nodejs.org/) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 * [ExpressJS](https://www.expresjs.org/) This is a NodeJS web application framework.
-* ~[PostgreSQL](https://www.postgresql.org/)~ is an advanced, enterprise class open source relational database that supports both SQL (relational) and JSON (non-relational) querying. 
+* [PostgreSQL](https://www.postgresql.org/)~ is an advanced, enterprise class open source relational database that supports both SQL (relational) and JSON (non-relational) querying. 
 ### Authors
 * [Chris Butterworth](https://github.com/chris-butterworth)
