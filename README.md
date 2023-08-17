@@ -36,6 +36,8 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 | GET        | /api/articles/:article_id/comments | Responds with a list of comments by article_id               |
 | POST       | /api/articles/:article_id/comments | Add a comment by article_id                                  |
 | DELETE     | /api/comments/:comment_id          | Deletes a comment by comment_id                              |
+| GET        | /api/users                          | Responds with a list of users             |
+| GET        | /api/users/:username              | Responds with a single user               |
 ### Technologies Used
 * [NodeJS](https://nodejs.org/) This is a cross-platform runtime environment built on Chrome's V8 JavaScript engine used in running JavaScript codes on the server. It allows for installation and managing of dependencies and communication with databases.
 * [ExpressJS](https://www.expresjs.org/) This is a NodeJS web application framework.
