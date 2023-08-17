@@ -115,12 +115,20 @@ describe('GET /api/articles', () => {
 				})
 			})
 	})
-	test('GET:200 query topic will filter results by the passed topic', () => {
+	test('GET:200 a valid query topic will filter results by the passed topic', () => {
 		return request(app)
 			.get('/api/articles?topic=cats')
 			.expect(200)
 			.then((response) => {
 				expect(response.body).toHaveLength(1)
+			})
+	})
+	test('GET:200 a valid query topic with no results will respond with an empty array of articles', () => {
+		return request(app)
+			.get('/api/articles?topic=paper')
+			.expect(200)
+			.then((response) => {
+				expect(response.body).toHaveLength(0)
 			})
 	})
 	test('GET:200 query sort_by will sort articles by any valid column', () => {
@@ -141,6 +149,7 @@ describe('GET /api/articles', () => {
 				expect(response.body).toBeSortedBy('votes')
 			})
 	})
+
 	test('GET:400 an invalid sort_by will return a 400 error', () => {
 		return request(app)
 			.get('/api/articles?sort_by=bananas')
@@ -170,6 +179,16 @@ describe('GET /api/articles', () => {
 					msg: {
 						acceptedOrder: ['ASC', 'DESC'],
 					},
+				})
+			})
+	})
+	test('GET:404 an invalid query topic will return 404 topic not found', () => {
+		return request(app)
+			.get('/api/articles?topic=bananas')
+			.expect(404)
+			.then(({ body }) => {
+				expect(body).toEqual({
+					msg: 'Topic bananas not found',
 				})
 			})
 	})

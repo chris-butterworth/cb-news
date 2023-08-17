@@ -3,6 +3,7 @@ const {
 	getAllArticles,
 	updateArticleVotes,
 } = require('../models/articles.models')
+const { getTopic } = require('../models/topics.models')
 
 exports.getArticle = (request, response, next) => {
 	const { article_id } = request.params
@@ -18,9 +19,12 @@ exports.getArticles = (request, response, next) => {
 	const { sort_by } = request.query
 	const { order } = request.query
 
-	getAllArticles(topic, sort_by, order)
-		.then((articles) => {
-			response.status(200).send(articles)
+	const promises = [getAllArticles(topic, sort_by, order)]
+	if (topic) promises.push(getTopic(topic))
+
+	return Promise.all(promises)
+		.then((promises) => {
+			response.status(200).send(promises[0])
 		})
 		.catch(next)
 }

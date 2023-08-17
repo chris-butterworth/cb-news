@@ -30,6 +30,7 @@ exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
 	const queryValues = []
 	let whereModifier = ''
 	if (topic) {
+		
 		whereModifier += `WHERE topic = $1`
 		queryValues.push(topic)
 	}
