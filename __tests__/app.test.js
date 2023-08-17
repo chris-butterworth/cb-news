@@ -1,15 +1,15 @@
 const app = require('../app')
+const fs = require('fs/promises')
 const request = require('supertest')
 const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
-const fs = require('fs/promises')
 
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
 describe('GET /api/notapath', () => {
-	test('ALL:404 responds with 404 Not found for any invalid path', () => {
+	test('ALL:404 responds with Not found for any invalid path', () => {
 		return request(app)
 			.get('/api/notapath')
 			.expect(404)
@@ -25,10 +25,9 @@ describe('GET /api/topics', () => {
 		return request(app)
 			.get('/api/topics')
 			.expect(200)
-			.then((response) => {
-				const topics = response.body
-				expect(topics).toHaveLength(3)
-				topics.forEach((topic) => {
+			.then(({ body }) => {
+				expect(body).toHaveLength(3)
+				body.forEach((topic) => {
 					expect(topic).toHaveProperty('slug', expect.any(String))
 					expect(topic).toHaveProperty('description', expect.any(String))
 				})
@@ -37,7 +36,7 @@ describe('GET /api/topics', () => {
 })
 
 describe('GET /api', () => {
-	test('GET:200 responds with an object describing all the available endpoints on your API', () => {
+	test('GET:200 responds with an object describing all the available endpoints on the API', () => {
 		fs.readFile('./endpoints.json', 'utf8')
 			.then((data) => {
 				const endpoints = JSON.parse(data)
@@ -47,9 +46,8 @@ describe('GET /api', () => {
 				return request(app)
 					.get('/api')
 					.expect(200)
-					.then((response) => {
-						const parsedResponse = JSON.parse(response.text)
-
+					.then(({ text }) => {
+						const parsedResponse = JSON.parse(text)
 						expect(parsedResponse).toEqual(endpoints)
 					})
 			})
@@ -77,8 +75,8 @@ describe('GET /api/articles/:article_id', () => {
 		return request(app)
 			.get('/api/articles/999')
 			.expect(404)
-			.then((response) => {
-				expect(response.body).toEqual({
+			.then(({ body }) => {
+				expect(body).toEqual({
 					msg: 'No article found for article_id 999',
 				})
 			})
@@ -87,8 +85,8 @@ describe('GET /api/articles/:article_id', () => {
 		return request(app)
 			.get('/api/articles/bananas')
 			.expect(400)
-			.then((response) => {
-				expect(response.body).toEqual({ msg: 'Bad request' })
+			.then(({ body }) => {
+				expect(body).toEqual({ msg: 'Bad request' })
 			})
 	})
 })
@@ -97,10 +95,10 @@ describe('GET /api/articles', () => {
 		return request(app)
 			.get('/api/articles')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveLength(13)
-				expect(response.body).toBeSortedBy('created_at', { descending: true })
-				response.body.forEach((article) => {
+			.then(({ body }) => {
+				expect(body).toHaveLength(13)
+				expect(body).toBeSortedBy('created_at', { descending: true })
+				body.forEach((article) => {
 					expect(article).not.toHaveProperty('body', expect.any(String))
 					expect(article).toHaveProperty('author', expect.any(String))
 					expect(article).toHaveProperty('title', expect.any(String))
@@ -117,34 +115,34 @@ describe('GET /api/articles', () => {
 		return request(app)
 			.get('/api/articles?topic=cats')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveLength(1)
+			.then(({ body }) => {
+				expect(body).toHaveLength(1)
 			})
 	})
 	test('GET:200 a valid query topic with no results will respond with an empty array of articles', () => {
 		return request(app)
 			.get('/api/articles?topic=paper')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveLength(0)
+			.then(({ body }) => {
+				expect(body).toHaveLength(0)
 			})
 	})
 	test('GET:200 query sort_by will sort articles by any valid column', () => {
 		return request(app)
 			.get('/api/articles?sort_by=votes')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveLength(13)
-				expect(response.body).toBeSortedBy('votes', { descending: true })
+			.then(({ body }) => {
+				expect(body).toHaveLength(13)
+				expect(body).toBeSortedBy('votes', { descending: true })
 			})
 	})
 	test('GET:200 query order can be set to asc or desc', () => {
 		return request(app)
 			.get('/api/articles?sort_by=votes&order=asc')
 			.expect(200)
-			.then((response) => {
-				expect(response.body).toHaveLength(13)
-				expect(response.body).toBeSortedBy('votes')
+			.then(({ body }) => {
+				expect(body).toHaveLength(13)
+				expect(body).toBeSortedBy('votes')
 			})
 	})
 
@@ -221,8 +219,8 @@ describe('GET /api/articles/:article_id/comments', () => {
 		return request(app)
 			.get('/api/articles/999/comments')
 			.expect(404)
-			.then((response) => {
-				expect(response.body).toEqual({
+			.then(({ body }) => {
+				expect(body).toEqual({
 					msg: 'No article found for article_id 999',
 				})
 			})
@@ -231,8 +229,8 @@ describe('GET /api/articles/:article_id/comments', () => {
 		return request(app)
 			.get('/api/articles/bananas/comments')
 			.expect(400)
-			.then((response) => {
-				expect(response.body).toEqual({ msg: 'Bad request' })
+			.then(({ body }) => {
+				expect(body).toEqual({ msg: 'Bad request' })
 			})
 	})
 })
@@ -243,12 +241,12 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.post('/api/articles/2/comments')
 			.send({
 				username: 'rogersop',
-				body: 'Such coding many comments wow',
+				body: 'comment text',
 			})
 			.expect(201)
 			.then(({ _body }) => {
 				expect(_body.comment_id).toBe(19)
-				expect(_body.body).toBe('Such coding many comments wow')
+				expect(_body.body).toBe('comment text')
 				expect(_body.article_id).toBe(2)
 				expect(_body.author).toBe('rogersop')
 				expect(_body.votes).toBe(0)
@@ -260,14 +258,14 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.post('/api/articles/2/comments')
 			.send({
 				username: 'rogersop',
-				body: 'Such coding many comments wow',
+				body: 'comment text',
 				key: 'value',
 			})
 			.expect(201)
 			.then(({ _body }) => {
 				expect(_body).not.toHaveProperty('key')
 				expect(_body.comment_id).toBe(19)
-				expect(_body.body).toBe('Such coding many comments wow')
+				expect(_body.body).toBe('comment text')
 				expect(_body.article_id).toBe(2)
 				expect(_body.author).toBe('rogersop')
 				expect(_body.votes).toBe(0)
@@ -279,7 +277,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 			.post('/api/articles/999/comments')
 			.send({
 				username: 'rogersop',
-				body: 'Such coding many comments wow',
+				body: 'comment text',
 			})
 			.expect(404)
 			.then(({ body }) => {
@@ -290,20 +288,20 @@ describe('POST /api/articles/:article_id/comments', () => {
 		return request(app)
 			.post('/api/articles/2/comments')
 			.send({
-				username: 'doge',
-				body: 'Such coding many comments wow',
+				username: 'username',
+				body: 'comment text',
 			})
 			.expect(404)
 			.then(({ body }) => {
-				expect(body.msg).toBe('User doge not found')
+				expect(body.msg).toBe('User username not found')
 			})
 	})
 	test('POST:400 responds with 400 when the article_id is invalid', () => {
 		return request(app)
-			.post('/api/articles/banana/comments')
+			.post('/api/articles/bananas/comments')
 			.send({
 				username: 'rogersop',
-				body: 'Such coding many comments wow',
+				body: 'comment text',
 			})
 			.expect(400)
 			.then(({ body }) => {
@@ -313,7 +311,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 	test('POST:400 responds with 400 when the post body is the wrong format', () => {
 		return request(app)
 			.post('/api/articles/2/comments')
-			.send('Such coding many comments wow')
+			.send('comment text')
 			.expect(400)
 			.then(({ body }) => {
 				expect(body.msg).toBe('Bad request, please see ./endpoints')
@@ -321,23 +319,20 @@ describe('POST /api/articles/:article_id/comments', () => {
 	})
 })
 describe('PATCH /api/arcticle/:article_id', () => {
-	test('PATCH:200 increases the vote value of an article by one and returns the updated article', () => {
+	test('PATCH:200 increases the vote value of an article by 1 and returns the updated article', () => {
 		return request(app)
 			.patch('/api/articles/1')
 			.send({ inc_votes: 1 })
 			.expect(200)
-			.then((response) => {
-				expect(response.body.votes).toBe(101)
-				expect(response.body).toHaveProperty('author', expect.any(String))
-				expect(response.body).toHaveProperty('title', expect.any(String))
-				expect(response.body).toHaveProperty('article_id', expect.any(Number))
-				expect(response.body).toHaveProperty('body', expect.any(String))
-				expect(response.body).toHaveProperty('topic', expect.any(String))
-				expect(response.body).toHaveProperty('created_at', expect.any(String))
-				expect(response.body).toHaveProperty(
-					'article_img_url',
-					expect.any(String)
-				)
+			.then(({ body }) => {
+				expect(body.votes).toBe(101)
+				expect(body).toHaveProperty('author', expect.any(String))
+				expect(body).toHaveProperty('title', expect.any(String))
+				expect(body).toHaveProperty('article_id', expect.any(Number))
+				expect(body).toHaveProperty('body', expect.any(String))
+				expect(body).toHaveProperty('topic', expect.any(String))
+				expect(body).toHaveProperty('created_at', expect.any(String))
+				expect(body).toHaveProperty('article_img_url', expect.any(String))
 			})
 	})
 	test('PATCH:200 decreases the vote value of an article by 100 and returns the updated article', () => {
@@ -345,18 +340,15 @@ describe('PATCH /api/arcticle/:article_id', () => {
 			.patch('/api/articles/1')
 			.send({ inc_votes: -100 })
 			.expect(200)
-			.then((response) => {
-				expect(response.body.votes).toBe(0)
-				expect(response.body).toHaveProperty('author', expect.any(String))
-				expect(response.body).toHaveProperty('title', expect.any(String))
-				expect(response.body).toHaveProperty('article_id', expect.any(Number))
-				expect(response.body).toHaveProperty('body', expect.any(String))
-				expect(response.body).toHaveProperty('topic', expect.any(String))
-				expect(response.body).toHaveProperty('created_at', expect.any(String))
-				expect(response.body).toHaveProperty(
-					'article_img_url',
-					expect.any(String)
-				)
+			.then(({ body }) => {
+				expect(body.votes).toBe(0)
+				expect(body).toHaveProperty('author', expect.any(String))
+				expect(body).toHaveProperty('title', expect.any(String))
+				expect(body).toHaveProperty('article_id', expect.any(Number))
+				expect(body).toHaveProperty('body', expect.any(String))
+				expect(body).toHaveProperty('topic', expect.any(String))
+				expect(body).toHaveProperty('created_at', expect.any(String))
+				expect(body).toHaveProperty('article_img_url', expect.any(String))
 			})
 	})
 	test('PATCH:404 responds with Not found if that article_id is valid but doesnt exist', () => {
@@ -404,14 +396,14 @@ describe('GET /api/users', () => {
 	})
 })
 describe('DELETE /api/comments/:comment_id', () => {
-	test('DELETE:204 responds with 204 no content, removes the passed comment from the database', () => {
+	test('DELETE:204 responds with No Content, removes the passed comment from the database', () => {
 		return request(app)
 			.delete('/api/comments/1')
 			.expect(204)
 			.then(() => {
 				return db.query(`SELECT * FROM comments`).then(({ rows }) => {
-					const verified = rows.some((comment) => {
-						comment.comment_id === 1
+					const verified = rows.some(({ comment_id }) => {
+						comment_id === 1
 					})
 					expect(verified).toBe(false)
 				})

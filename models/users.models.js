@@ -24,7 +24,7 @@ exports.getAllUsers = () => {
 	SELECT * FROM users
 	`
 		)
-		.then((articles) => {
-			return articles.rows
+		.then(({rows}) => {
+			return rows
 		})
 }

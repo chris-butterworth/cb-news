@@ -41,7 +41,6 @@ exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
 	const queryValues = []
 	let whereModifier = ''
 	if (topic) {
-		
 		whereModifier += `WHERE topic = $1`
 		queryValues.push(topic)
 	}
@@ -73,8 +72,8 @@ exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
 	GROUP BY articles.article_id
 	ORDER BY ${sort_by} ${order}`
 
-	return db.query(dbQuery, queryValues).then((articles) => {
-		return articles.rows
+	return db.query(dbQuery, queryValues).then(({ rows }) => {
+		return rows
 	})
 }
 
@@ -89,7 +88,7 @@ exports.updateArticleVotes = (newVotes, article_id) => {
 	`,
 			[newVotes, article_id]
 		)
-		.then((article) => {
-			return article.rows
+		.then(({ rows }) => {
+			return rows
 		})
 }
