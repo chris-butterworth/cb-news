@@ -4,10 +4,10 @@ const {
 	removeCommentById,
 } = require('../models/comments.models')
 const { getArticleById } = require('../models/articles.models')
-const { getUser } = require('../models/users.models')
+const { getUserById } = require('../models/users.models')
 
 exports.getComments = (request, response, next) => {
-	const {article_id} = request
+	const { article_id } = request
 	const promises = [
 		getCommentsByArticleId(article_id),
 		getArticleById(article_id),
@@ -22,7 +22,7 @@ exports.getComments = (request, response, next) => {
 }
 
 exports.postComment = (request, response, next) => {
-	const {article_id} = request
+	const { article_id } = request
 	const { body } = request.body
 	const { username } = request.body
 
@@ -30,7 +30,7 @@ exports.postComment = (request, response, next) => {
 		const error = { status: 400, msg: 'Bad request, please see ./endpoints' }
 		return next(error)
 	}
-	getUser(username)
+	getUserById(username)
 		.then(() => {
 			return getArticleById(article_id)
 		})

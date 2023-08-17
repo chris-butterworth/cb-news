@@ -379,7 +379,6 @@ describe('PATCH /api/arcticle/:article_id', () => {
 			})
 	})
 })
-
 describe('GET /api/users', () => {
 	test('GET:200 responds with an array of user objects.', () => {
 		return request(app)
@@ -394,6 +393,28 @@ describe('GET /api/users', () => {
 				})
 			})
 	})
+})
+describe('GET /api/users/:username', () => {
+	test('GET:200 responds a single user object', () => {
+		return request(app)
+			.get('/api/users/rogersop')
+			.expect(200)
+			.then(({ body }) => {
+				expect(body.username).toBe('rogersop')
+				expect(body.name).toBe('paul')
+				expect(body.avatar_url).toBe(
+					'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+				)
+			})
+	})
+})
+test('GET:404 responds with Not Found if user does not exist', () => {
+	return request(app)
+		.get('/api/users/username')
+		.expect(404)
+		.then(({ body }) => {
+			expect(body.msg).toEqual('User username not found')
+		})
 })
 describe('DELETE /api/comments/:comment_id', () => {
 	test('DELETE:204 responds with No Content, removes the passed comment from the database', () => {

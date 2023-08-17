@@ -1,6 +1,6 @@
 const db = require('../db/connection')
 
-exports.getUser = (username) => {
+exports.getUserById = (username) => {
 	return db
 		.query(
 			`
