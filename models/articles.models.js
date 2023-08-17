@@ -26,10 +26,38 @@ exports.getArticleById = (article_id) => {
 		})
 }
 
-exports.getAllArticles = () => {
-	return db
-		.query(
-			`
+exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
+	const acceptedSort = [
+		'author',
+		'title',
+		'article_id',
+		'topic',
+		'created_at',
+		'votes',
+		'comment_count',
+	]
+	const acceptedOrder = ['ASC', 'DESC']
+
+	const queryValues = []
+	let whereModifier = ''
+	if (topic) {
+		
+		whereModifier += `WHERE topic = $1`
+		queryValues.push(topic)
+	}
+
+	if (!acceptedSort.includes(sort_by)) {
+		return Promise.reject({ status: 400, msg: { acceptedSort: acceptedSort } })
+	}
+
+	if (!acceptedOrder.includes(order.toUpperCase())) {
+		return Promise.reject({
+			status: 400,
+			msg: { acceptedOrder: acceptedOrder },
+		})
+	}
+
+	const dbQuery = `
 	SELECT 
 	articles.author,
 	articles.title,
@@ -40,14 +68,14 @@ exports.getAllArticles = () => {
 	articles.article_img_url,
 	CAST(COUNT(comments.article_id) AS INT) AS comment_count 
 	FROM articles 
-	LEFT JOIN comments ON articles.article_id = comments.article_id
+	LEFT JOIN comments ON articles.article_id = comments.article_id 
+	${whereModifier} 
 	GROUP BY articles.article_id
-	ORDER BY articles.created_at DESC
-	`
-		)
-		.then((articles) => {
-			return articles.rows
-		})
+	ORDER BY ${sort_by} ${order}`
+
+	return db.query(dbQuery, queryValues).then((articles) => {
+		return articles.rows
+	})
 }
 
 exports.updateArticleVotes = (newVotes, article_id) => {
