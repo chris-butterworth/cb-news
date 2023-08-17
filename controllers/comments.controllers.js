@@ -1,6 +1,8 @@
 const {
 	getCommentsByArticleId,
+	getCommentById,
 	postNewComment,
+	addCommentVotes,
 	removeCommentById,
 } = require('../models/comments.models')
 const { getArticleById } = require('../models/articles.models')
@@ -39,6 +41,27 @@ exports.postComment = (request, response, next) => {
 		})
 		.then(([postedComment]) => {
 			response.status(201).send(postedComment)
+		})
+		.catch(next)
+}
+
+exports.addVotes = (request, response, next) => {
+	const { comment_id } = request.params
+	const { inc_votes } = request.body
+
+	if (!inc_votes) {
+		const error = { status: 400, msg: 'Bad request, please see ./endpoints' }
+		return next(error)
+	}
+	const promises = [
+		addCommentVotes(inc_votes, comment_id),
+		getCommentById(comment_id),
+	]
+
+	return Promise.all(promises)
+		.then((resolvedPromises) => {
+			const [updatedComment] = resolvedPromises[0]
+			response.status(200).send(updatedComment)
 		})
 		.catch(next)
 }
