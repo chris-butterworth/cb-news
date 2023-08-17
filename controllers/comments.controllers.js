@@ -7,8 +7,7 @@ const { getArticleById } = require('../models/articles.models')
 const { getUser } = require('../models/users.models')
 
 exports.getComments = (request, response, next) => {
-	const { article_id } = request.params
-
+	const article_id = request.article_id
 	const promises = [
 		getCommentsByArticleId(article_id),
 		getArticleById(article_id),
@@ -23,7 +22,7 @@ exports.getComments = (request, response, next) => {
 }
 
 exports.postComment = (request, response, next) => {
-	const { article_id } = request.params
+	const article_id = request.article_id
 	const { body } = request.body
 	const { username } = request.body
 
