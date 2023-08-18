@@ -1,17 +1,17 @@
 name: Test
 on:
-        pull_request:
-                branches: [ main ]
+	pull_request:
+    branches: [ main ]
 jobs:
-test-utils:
-	runs-on: ubuntu-latest
-	steps:
-		- name: checkout and clone repo
-		uses: actions/checkout@v3
-		- name: install dependencies
-		run: npm ci
-		- name: run utils tests
-		run: npm run test-utils
+	test-utils:
+		runs-on: ubuntu-latest
+		steps:
+			- name: checkout and clone repo
+			uses: actions/checkout@v3
+			- name: install dependencies
+			run: npm ci
+			- name: run utils tests
+			run: npm run test-utils
 test-app:
 	needs: test-utils
 	runs-on: ubuntu-latest
