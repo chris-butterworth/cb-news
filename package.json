@@ -10,7 +10,8 @@
 		"seed": "node ./db/seeds/run-seed.js",
 		"test-utils": "jest utils",
 		"test-app": "jest app",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"test": "jest"
 	},
 	"repository": {
 		"type": "git",
