@@ -30,7 +30,7 @@ jobs:
      run: PGDATABASE=test_db PGUSER=ms_test_user PGPASSWORD=p4ssw0rd npm run test-app
  test-app-live-db:
   needs: test-app
-	runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
   steps:
    - name: checkout and clone repo
      uses: actions/checkout@v3
