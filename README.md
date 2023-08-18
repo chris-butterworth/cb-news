@@ -37,6 +37,7 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 | GET        | /api                               | Responds with a list of available endpoints                                     |
 | GET        | /api/topics                        | Responds with a list of topics                                                  |
 | GET        | /api/articles                      | Responds with a list of articles. Accepts queries ‘sort_by’ ‘order’ and ‘topic’ |
+| POST       | /api/articles                      | Adds a new article                                                              |
 | GET        | /api/articles/:article_id          | Responds with a single article by article_id                                    |
 | PATCH      | /api/articles/:article_id          | Used to add votes to an article by article_id                                   |
 | GET        | /api/articles/:article_id/comments | Responds with a list of comments by article_id                                  |

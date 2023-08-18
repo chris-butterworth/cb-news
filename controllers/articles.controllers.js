@@ -2,6 +2,7 @@ const {
 	getArticleById,
 	getAllArticles,
 	updateArticleVotes,
+	postNewArticle,
 } = require('../models/articles.models')
 const { getTopic } = require('../models/topics.models')
 
@@ -49,4 +50,23 @@ exports.addVotes = (request, response, next) => {
 			response.status(200).send(updatedArticle)
 		})
 		.catch(next)
+}
+
+exports.postArticle = (request, response, next) => {
+	const { author } = request.body
+	const { title } = request.body
+	const { body } = request.body
+	const { topic } = request.body
+	const { article_img_url } = request.body
+
+	if (!author || !title || !body || !topic) {
+		const error = { status: 400, msg: 'Bad request, please see ./endpoints' }
+		return next(error)
+	}
+	postNewArticle(author, title, body, topic, article_img_url).then(
+		([newArticle]) => {
+			newArticle.comment_count = 0
+			response.status(201).send(newArticle)
+		}
+	)
 }

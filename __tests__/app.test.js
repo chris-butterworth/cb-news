@@ -160,6 +160,100 @@ describe('/api/articles', () => {
 				})
 		})
 	})
+	describe('POST', () => {
+		test('POST:201 adds a new article', () => {
+			return request(app)
+				.post('/api/articles')
+				.send({
+					author: 'rogersop',
+					title: 'article title',
+					body: 'article text',
+					topic: 'mitch',
+					article_img_url: 'url',
+				})
+				.expect(201)
+				.then(({ _body }) => {
+					expect(_body.article_id).toBe(14)
+					expect(_body.author).toBe('rogersop')
+					expect(_body.title).toBe('article title')
+					expect(_body.body).toBe('article text')
+					expect(_body.article_img_url).toBe('url')
+					expect(_body.votes).toBe(0)
+					expect(_body.comment_count).toBe(0)
+					expect(_body).toHaveProperty('created_at', expect.any(String))
+				})
+		})
+		test('POST:201 adds a new article, image url defaults if not provided', () => {
+			return request(app)
+				.post('/api/articles')
+				.send({
+					author: 'rogersop',
+					title: 'article title',
+					body: 'article text',
+					topic: 'mitch',
+				})
+				.expect(201)
+				.then(({ _body }) => {
+					expect(_body.article_id).toBe(14)
+					expect(_body.author).toBe('rogersop')
+					expect(_body.title).toBe('article title')
+					expect(_body.body).toBe('article text')
+					expect(_body.article_img_url).toBe(
+						'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
+					)
+					expect(_body.votes).toBe(0)
+					expect(_body.comment_count).toBe(0)
+					expect(_body).toHaveProperty('created_at', expect.any(String))
+				})
+		})
+		test.only('POST:201 will ignore any additional properties passed in with the body object', () => {
+			return request(app)
+				.post('/api/articles')
+				.send({
+					author: 'rogersop',
+					title: 'article title',
+					body: 'article text',
+					topic: 'mitch',
+					key: 'value',
+				})
+				.expect(201)
+				.then(({ _body }) => {
+					expect(_body.article_id).toBe(14)
+					expect(_body.author).toBe('rogersop')
+					expect(_body.title).toBe('article title')
+					expect(_body.body).toBe('article text')
+					expect(_body.article_img_url).toBe(
+						'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
+					)
+					expect(_body.votes).toBe(0)
+					expect(_body.comment_count).toBe(0)
+					expect(_body).toHaveProperty('created_at', expect.any(String))
+				})
+		})
+		test('POST:400 responds with 400 when the post body is the wrong format', () => {
+			return request(app)
+				.post('/api/articles')
+				.send('article text')
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe('Bad request, please see ./endpoints')
+				})
+		})
+		test('POST:400 responds with 400 if any of the required object keys are missing', () => {
+			return request(app)
+				.post('/api/articles')
+				.send({
+					title: 'article title',
+					body: 'article text',
+					topic: 'mitch',
+					key: 'value',
+				})
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe('Bad request, please see ./endpoints')
+				})
+		})
+	})
 	describe('/api/articles/:article_id', () => {
 		describe('GET', () => {
 			test('GET:200 responds with an article object', () => {

@@ -92,3 +92,33 @@ exports.updateArticleVotes = (newVotes, article_id) => {
 			return rows
 		})
 }
+
+exports.postNewArticle = (author, title, body, topic, article_img_url) => {
+	const values = [author, title, body, topic]
+	let addImageUrl = ''
+	let dollarFive = ''
+	if (article_img_url) {
+		values.push(article_img_url)
+		addImageUrl += ', article_img_url'
+		dollarFive += ', $5'
+	}
+	return db
+		.query(
+			`
+			WITH inserted_article as (
+				INSERT INTO articles (author, title, body, topic ${addImageUrl})
+				VALUES ($1, $2, $3, $4 ${dollarFive})
+				RETURNING *
+				) 
+
+				SELECT *
+				FROM inserted_article
+				`,
+				values
+				)
+				.then(({ rows }) => {
+					return rows
+				})
+			}
+			
+	
