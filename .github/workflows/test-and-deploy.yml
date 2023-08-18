@@ -1,7 +1,7 @@
 name: Test
 on: [pull_request]
-  	branches:
-	  	- main
+  branches:
+  	- main
 jobs:
 	test-utils:
 		runs-on: ubuntu-latest
