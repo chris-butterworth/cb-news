@@ -42,7 +42,7 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 | PATCH      | /api/articles/:article_id          | Used to add votes to an article by article_id                                   |
 | GET        | /api/articles/:article_id/comments | Responds with a list of comments by article_id                                  |
 | POST       | /api/articles/:article_id/comments | Add a comment by article_id                                                     |
-| PATCH      | /api/articles/:article_id/comments | Used to add votes to a comment by comment_id                                    |
+| PATCH      | /api/comments/comments             | Used to add votes to a comment by comment_id                                    |
 | DELETE     | /api/comments/:comment_id          | Deletes a comment by comment_id                                                 |
 | GET        | /api/users                         | Responds with a list of users                                                   |
 | GET        | /api/users/:username               | Responds with a single user                                                     |
