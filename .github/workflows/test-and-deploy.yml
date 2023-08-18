@@ -7,29 +7,27 @@ jobs:
   runs-on: ubuntu-latest
   steps:
    - name: checkout and clone repo
-   uses: actions/checkout@v3
+     uses: actions/checkout@v3
    - name: install dependencies
-   run: npm ci
+     run: npm ci
    - name: run utils tests
-   run: npm run test-utils
+     run: npm run test-utils
 test-app:
  needs: test-utils
  runs-on: ubuntu-latest
  steps:
   - name: checkout and clone repo
-  uses: actions/checkout@v3
+    uses: actions/checkout@v3
   - name: install dependencies
-  run: npm install
+    run: npm install
   - name: setup postgresql
-  uses: harmon758/postgresql-action@v1
-  with:
-   postgresql db: test_db
-   postgresql user: ms_test_user
-   postgresql password: p4ssw0rd
-					
+    uses: harmon758/postgresql-action@v1
+    with:
+     postgresql db: test_db
+     postgresql user: ms_test_user
+     postgresql password: p4ssw0rd
   - name: run app tests
-  run: PGDATABASE=test_db PGUSER=ms_test_user PGPASSWORD=p4ssw0rd npm run test-app
-	
+    run: PGDATABASE=test_db PGUSER=ms_test_user PGPASSWORD=p4ssw0rd npm run test-app
 test-app-live-db:
  needs: test-app
  steps:
