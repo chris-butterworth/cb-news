@@ -19,12 +19,17 @@ exports.getArticles = (request, response, next) => {
 	const { topic } = request.query
 	const { sort_by } = request.query
 	const { order } = request.query
+	const { limit } = request.query
+	const { page } = request.query
 
-	const promises = [getAllArticles(topic, sort_by, order)]
+	const promises = [getAllArticles(topic, sort_by, order, limit, page)]
 	if (topic) promises.push(getTopic(topic))
+
+
 
 	return Promise.all(promises)
 		.then((promises) => {
+			console.log(promises)
 			response.status(200).send(promises[0])
 		})
 		.catch(next)

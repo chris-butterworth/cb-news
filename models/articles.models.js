@@ -26,7 +26,13 @@ exports.getArticleById = (article_id) => {
 		})
 }
 
-exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
+exports.getAllArticles = (
+	topic,
+	sort_by = 'created_at',
+	order = 'DESC',
+	limit,
+	page
+) => {
 	const acceptedSort = [
 		'author',
 		'title',
@@ -56,7 +62,12 @@ exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
 		})
 	}
 
+	if (!/^\d+$/g.test(limit)) limit = 10
+
+	if (!/^\d+$/g.test(page)) page = 1
+
 	const dbQuery = `
+	WITH all_results AS (
 	SELECT 
 	articles.author,
 	articles.title,
@@ -70,9 +81,18 @@ exports.getAllArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
 	LEFT JOIN comments ON articles.article_id = comments.article_id 
 	${whereModifier} 
 	GROUP BY articles.article_id
-	ORDER BY ${sort_by} ${order}`
+	)
+	SELECT * FROM (
+		TABLE all_results
+	ORDER BY ${sort_by} ${order}
+	LIMIT ${limit}
+	OFFSET (${page} -1) * ${limit}
+) 
+RIGHT JOIN (SELECT COUNT(*) FROM all_results AS full_count)
+	`
 
 	return db.query(dbQuery, queryValues).then(({ rows }) => {
+		const response = [...[rows], total]
 		return rows
 	})
 }
@@ -114,11 +134,9 @@ exports.postNewArticle = (author, title, body, topic, article_img_url) => {
 				SELECT *
 				FROM inserted_article
 				`,
-				values
-				)
-				.then(({ rows }) => {
-					return rows
-				})
-			}
-			
-	
+			values
+		)
+		.then(({ rows }) => {
+			return rows
+		})
+}
