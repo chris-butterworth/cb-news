@@ -40,6 +40,26 @@
 			]
 		}
 	},
+	"POST /api/articles": {
+		"description": "posts a new article, returns the posted article",
+		"expectedInput": {
+			"author": "user1",
+			"title": "article title",
+			"body": "article text",
+			"topic": "mitch",
+			"key": "value"
+		},
+		"exampleResponse": {
+			"article_id": 0,
+			"author": "username 1",
+			"title": "title",
+			"body": "article text",
+			"article_img_url": "url",
+			"votes": "0",
+			"comment_count": 0,
+			"created_at": "2018-05-30T15:59:13.341Z"
+		}
+	},
 	"GET /api/articles/:article_id": {
 		"description": "serves an array containing a single article by id",
 		"queries": [],
