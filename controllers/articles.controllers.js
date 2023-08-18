@@ -29,7 +29,6 @@ exports.getArticles = (request, response, next) => {
 
 	return Promise.all(promises)
 		.then((promises) => {
-			console.log(promises)
 			response.status(200).send(promises[0])
 		})
 		.catch(next)

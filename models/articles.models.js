@@ -67,7 +67,6 @@ exports.getAllArticles = (
 	if (!/^\d+$/g.test(page)) page = 1
 
 	const dbQuery = `
-	WITH all_results AS (
 	SELECT 
 	articles.author,
 	articles.title,
@@ -81,18 +80,12 @@ exports.getAllArticles = (
 	LEFT JOIN comments ON articles.article_id = comments.article_id 
 	${whereModifier} 
 	GROUP BY articles.article_id
-	)
-	SELECT * FROM (
-		TABLE all_results
 	ORDER BY ${sort_by} ${order}
 	LIMIT ${limit}
 	OFFSET (${page} -1) * ${limit}
-) 
-RIGHT JOIN (SELECT COUNT(*) FROM all_results AS full_count)
 	`
 
 	return db.query(dbQuery, queryValues).then(({ rows }) => {
-		const response = [...[rows], total]
 		return rows
 	})
 }
