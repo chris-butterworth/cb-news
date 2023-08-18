@@ -4,7 +4,7 @@ on:
     branches: [ main ]
 jobs:
 test-utils:
-	runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
 	steps:
 		- name: checkout and clone repo
 		uses: actions/checkout@v3
