@@ -22,7 +22,7 @@ The API uses the [Express](https://expressjs.com/) Node.js web application frame
 - The main branch is the current working version of the API
 - Run `npm install` to install all dependencies
 - Create two .env files in your project root folder `.env.test` and`.env.development` Into each, add `PGDATABASE=` with the correct database name for that environment (see /db/setup.sql for the database names).
-- Run `npm run seed-dbs` to seed the databases
+- Run `npm run setup-dbs` to seed the databases
 
 > Minimum version - Node.js v20.5.1, Postgres v15
 
