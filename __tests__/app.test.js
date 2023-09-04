@@ -206,7 +206,7 @@ describe('/api/articles', () => {
 					expect(_body).toHaveProperty('created_at', expect.any(String))
 				})
 		})
-		test.only('POST:201 will ignore any additional properties passed in with the body object', () => {
+		test('POST:201 will ignore any additional properties passed in with the body object', () => {
 			return request(app)
 				.post('/api/articles')
 				.send({
