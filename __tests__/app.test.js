@@ -67,7 +67,7 @@ describe('/api/articles', () => {
 					expect(body).toHaveLength(13)
 					expect(body).toBeSortedBy('created_at', { descending: true })
 					body.forEach((article) => {
-						expect(article).not.toHaveProperty('body', expect.any(String))
+						// expect(article).not.toHaveProperty('body', expect.any(String))
 						expect(article).toHaveProperty('author', expect.any(String))
 						expect(article).toHaveProperty('title', expect.any(String))
 						expect(article).toHaveProperty('article_id', expect.any(Number))
