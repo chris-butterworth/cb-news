@@ -64,6 +64,7 @@ describe('/api/articles', () => {
 				.get('/api/articles')
 				.expect(200)
 				.then(({ body }) => {
+					console.log(body)
 					expect(body).toHaveLength(13)
 					expect(body).toBeSortedBy('created_at', { descending: true })
 					body.forEach((article) => {

@@ -4,7 +4,7 @@
 
 CB News is a RESTful API for the purpose of accessing application data programmatically, mimicking a real world backend service (such as Reddit) which should provide this information to the front end architecture.
 See it live [here](https://cb-news.onrender.com/api)!
-The API uses the [Express](https://expressjs.com/) Node.js web application framework and interacts with the [PSQL](https://www.postgresql.org/download/)database using ~[node-postgres](https://node-postgres.com/)~.
+The API uses the [Express](https://expressjs.com/) Node.js web application framework and interacts with the [PSQL](https://www.postgresql.org/download/)database using [node-postgres](https://node-postgres.com/).
 
 ### Project Features
 

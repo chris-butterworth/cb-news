@@ -18,6 +18,7 @@
 		"exampleResponse": {
 			"articles": [
 				{
+					"article_id": 1,
 					"title": "article title",
 					"topic": "cats",
 					"author": "user1",
@@ -28,6 +29,7 @@
 					"article_img_url": "imageUrl"
 				},
 				{
+					"article_id": 2,
 					"title": "article title2",
 					"topic": "cats",
 					"author": "user2",
@@ -78,6 +80,7 @@
 		"description": "modify the vote count on an existing article. Positive and negative integers are allowed",
 		"expectedInput": { "inc_votes": 1 },
 		"exampleResponse": {
+			"article_id": 1,
 			"title": "article title",
 			"topic": "cats",
 			"author": "user1",
@@ -94,24 +97,20 @@
 		"exampleResponse": {
 			"comments": [
 				{
-					"title": "article title1",
-					"topic": "cats",
+					"comment_id": 1,
+					"article_id": 2,
 					"author": "user1",
-					"body": "article text",
+					"body": "comment text",
 					"created_at": "2018-05-30T15:59:13.341Z",
-					"votes": 0,
-					"comment_count": 0,
-					"article_img_url": "imageUrl"
+					"votes": 0
 				},
 				{
-					"title": "article title2",
-					"topic": "cats",
+					"comment_id": 1,
+					"article_id": 2,
 					"author": "user2",
-					"body": "article text",
+					"body": "comment text",
 					"created_at": "2018-05-30T15:59:13.341Z",
-					"votes": 0,
-					"comment_count": 0,
-					"article_img_url": "imageUrl"
+					"votes": 0
 				}
 			]
 		}
