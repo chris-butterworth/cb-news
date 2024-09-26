@@ -1,0 +1,6 @@
+exports.getPagination = (page, size) => {
+	const limit = !isNaN(size) ? size : 5
+	const offset = !isNaN(page) ? page * limit : 0
+
+	return { limit, offset }
+}

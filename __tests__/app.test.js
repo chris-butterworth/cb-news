@@ -64,7 +64,7 @@ describe('/api/articles', () => {
 				.get('/api/articles')
 				.expect(200)
 				.then(({ body }) => {
-					expect(body).toHaveLength(13)
+					expect(body).toHaveLength(10)
 					expect(body).toBeSortedBy('created_at', { descending: true })
 					body.forEach((article) => {
 						// expect(article).not.toHaveProperty('body', expect.any(String))
@@ -103,7 +103,7 @@ describe('/api/articles', () => {
 				.get('/api/articles?sort_by=votes')
 				.expect(200)
 				.then(({ body }) => {
-					expect(body).toHaveLength(13)
+					expect(body).toHaveLength(10)
 					expect(body).toBeSortedBy('votes', { descending: true })
 				})
 		})
@@ -112,11 +112,46 @@ describe('/api/articles', () => {
 				.get('/api/articles?sort_by=votes&order=asc')
 				.expect(200)
 				.then(({ body }) => {
-					expect(body).toHaveLength(13)
+					expect(body).toHaveLength(10)
 					expect(body).toBeSortedBy('votes')
 				})
 		})
+		test('GET:200 query limit will limit the number of results returned', () => {
+			return request(app)
+				.get('/api/articles?limit=3')
+				.expect(200)
+				.then(({ body }) => {
+					expect(body).toHaveLength(3)
+				})
+		})
+		test('GET:200 an invalid query limit will be ignored and return the default number of results', () => {
+			return request(app)
+				.get('/api/articles?limit=bananas')
+				.expect(200)
+				.then(({ body }) => {
+					expect(body).toHaveLength(10)
+				})
+		})
+		test('GET:200 query page will offset the results returned by the limit', () => {
+			return request(app)
+				.get('/api/articles?page=2&limit=2&sort_by=article_id&order=asc')
+				.expect(200)
+				.then(({body}) => {
+					expect(body[0].article_id).toBe(3)
+					expect(body[1].article_id).toBe(4)
 
+				})
+		})
+		test('GET:200 an invalid page limit will be ignored and return the default number of results', () => {
+			return request(app)
+				.get('/api/articles?page=bananas&limit=2&sort_by=article_id&order=asc')
+				.expect(200)
+				.then(({ body }) => {
+					expect(body[0].article_id).toBe(1)
+					expect(body[1].article_id).toBe(2)
+
+				})
+		})
 		test('GET:400 an invalid sort_by will return a 400 error', () => {
 			return request(app)
 				.get('/api/articles?sort_by=bananas')
